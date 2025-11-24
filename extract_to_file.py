@@ -114,7 +114,7 @@ def process_all_endpoints():
     # 3. Ghi dữ liệu ra CSV (chỉ ghi nếu có dữ liệu)
     if not all_rows:
         print("Không thu thập được dữ liệu nào.")
-        return
+        return False
 
     # Tạo thư mục nếu chưa có
     if not os.path.exists(OUTPUT_DIR):
@@ -138,9 +138,11 @@ def process_all_endpoints():
         
         print(f"\n--> HOÀN TẤT! Tổng cộng {len(all_rows)} dòng dữ liệu.")
         print(f"--> File lưu tại: {output_csv_path}")
+        return True
         
     except PermissionError:
         print(f"Lỗi: Không thể ghi file {output_csv_path}. Hãy đóng file nếu đang mở.")
+        return False
 
 if __name__ == "__main__":
     process_all_endpoints()
