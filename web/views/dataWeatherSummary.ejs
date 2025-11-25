@@ -62,8 +62,16 @@
       // 3. Xử lý dữ liệu (Pivot Data)
       // Lấy danh sách tháng duy nhất (trục X)
       const uniqueMonths = [...new Set(rawData.map(item => item.month_sk))].sort((a, b) => a - b);
-      const labels = uniqueMonths.map(m => `Tháng ${m}`);
-
+      
+      //format month_sk to MM/YYYY
+      const formatMonthSk = (monthSk) => {
+        if (!monthSk) return "";
+        const str = monthSk.toString();
+        if (str.length !== 6) return str;
+      return `${str.substring(4, 6)}/${str.substring(0, 4)}`;
+      };
+      const labels = uniqueMonths.map(formatMonthSk);
+      
       // Lấy danh sách location key duy nhất
       const uniqueKeys = [...new Set(rawData.map(item => item.location_key))];
 

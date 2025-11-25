@@ -72,8 +72,8 @@ def main():
     # 1. ĐỔI TÊN CÁC CỘT CHO KHỚP VỚI BẢNG RAW
     rename_map = {
         'date': 'date_time',
-        'min_temp': 'min_temp_c',      # QUAN TRỌNG NHẤT!
-        'max_temp': 'max_temp_c'       # QUAN TRỌNG NHẤT!
+        'min_temp': 'min_temp_c', 
+        'max_temp': 'max_temp_c'       
     }
     df = df.rename(columns=rename_map)
 
