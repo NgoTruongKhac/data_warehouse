@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title><%= pageTitle %></title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Thư viện Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body class="container py-4">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+        <li class="breadcrumb-item active" aria-current="page">
+          <%= locationName %>
+        </li>
+      </ol>
+    </nav>
+
+    <h2 class="mb-4">Dữ liệu thời tiết: <%= locationName %></h2>
+
+    <!-- Vùng vẽ biểu đồ -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <canvas id="tempChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Bảng dữ liệu -->
+    <table class="table table-bordered table-striped">
+      <thead class="table-dark">
+        <tr>
+          <th>Thời gian</th>
+          <th>Nhiệt độ (Min/Max)</th>
+          <th>Ban ngày</th>
+          <th>Ban đêm</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% data.forEach(item => { %>
+        <tr>
+          <td><%= new Date(item.date_time).toLocaleDateString('vi-VN') %></td>
+          <td><%= item.min_temp_c %>°F - <%= item.max_temp_c %>°F</td>
+          <td><%= item.day_phrase %></td>
+          <td><%= item.night_phrase %></td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+
+    <script>
+      // Lấy dữ liệu từ Server EJS gán vào biến JS Client
+      const weatherData = <%- JSON.stringify(data) %>;
+
+      // Chuẩn bị dữ liệu cho Chart.js
+      const labels = weatherData.map(item => new Date(item.date_time).toLocaleDateString('vi-VN'));
+      const maxTemps = weatherData.map(item => item.max_temp_c);
+      const minTemps = weatherData.map(item => item.min_temp_c);
+
+      const ctx = document.getElementById('tempChart').getContext('2d');
+      new Chart(ctx, {
+          type: 'line',
+          data: {
+              labels: labels,
+              datasets: [
+                  {
+                      label: 'Nhiệt độ cao nhất (°F)',
+                      data: maxTemps,
+                      borderColor: 'rgb(255, 99, 132)',
+                      backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                      tension: 0.3
+                  },
+                  {
+                      label: 'Nhiệt độ thấp nhất (°F)',
+                      data: minTemps,
+                      borderColor: 'rgb(54, 162, 235)',
+                      backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                      tension: 0.3
+                  }
+              ]
+          },
+          options: {
+              responsive: true,
+              plugins: {
+                  title: { display: true, text: 'Biểu đồ biến động nhiệt độ' }
+              }
+          }
+      });
+    </script>
+  </body>
+</html>

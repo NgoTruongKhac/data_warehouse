@@ -1,19 +1,24 @@
 {
-  "name": "weather_dashboard",
+  "name": "web",
   "version": "1.0.0",
-  "description": "",
-  "main": "app.js",
+  "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node app.js"
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "description": "",
   "dependencies": {
     "dotenv": "^17.2.3",
+    "ejs": "^3.1.10",
     "express": "^5.1.0",
     "mysql2": "^3.15.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
   }
 }

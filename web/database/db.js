@@ -1,26 +1,34 @@
-require('dotenv').config(); // Load biến môi trường từ .env
-const mysql = require('mysql2/promise'); // Sử dụng phiên bản hỗ trợ Promise (Async/Await)
+import mysql from "mysql2/promise"; // Thay đổi require thành import
+import dotenv from "dotenv";
 
-// Tạo Pool kết nối (Tốt cho Web Server)
-const pool = mysql.createPool({
-    host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASS,
-    database: process.env.DM_DB_NAME, // Kết nối vào 'weather_data_mart'
-    port: parseInt(process.env.DB_PORT) || 3306,
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
+dotenv.config(); // Nạp biến môi trường
+
+// 1. Tạo Connection Pool
+// Pool giúp tái sử dụng kết nối, tốt hơn cho hiệu năng web server
+export const pool = mysql.createPool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT || 3306,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
 });
 
-// Kiểm tra kết nối
-pool.getConnection()
-    .then(conn => {
-        console.log("✅ Đã kết nối thành công đến MySQL Data Mart!");
-        conn.release();
-    })
-    .catch(err => {
-        console.error("❌ Lỗi kết nối MySQL:", err.message);
-    });
+// 2. Hàm connectDb để kiểm tra kết nối khi server khởi động
+export const connectDb = async () => {
+  try {
+    // Thử lấy một kết nối từ pool để kiểm tra
+    const connection = await pool.getConnection();
+    console.log("✅ Kết nối MySQL thành công!");
+    connection.release(); // Trả kết nối về pool ngay sau khi kiểm tra xong
+  } catch (error) {
+    console.error("❌ Kết nối MySQL thất bại:", error.message);
+    // Có thể throw error nếu muốn dừng server khi không có DB
+    // process.exit(1);
+  }
+};
 
-module.exports = pool;
+// Trong ES Modules, ta dùng export trực tiếp ở đầu biến hoặc dùng export {} như dưới đây (nếu chưa export lẻ tẻ ở trên)
+// Nhưng ở trên tôi đã dùng 'export const', nên không cần module.exports nữa.
